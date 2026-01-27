@@ -283,15 +283,16 @@ public class Task {
             return description.substring(0, MAX_LENGTH - 3) + "...";
         }
     }
-    /**
-     * Retorna a formatação da data em exibição padrão
-     * Formato: dd/MM/yyyy HH:mm
+     /**
+     * Formata data de criação para exibição
+     * Formato: "dd/MM/yyyy HH:mm"
+     * 
      * @return data formatada
      */
-    public String getFormattedCreatedAt(){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return createdAt.format(formatter);
+    public String getFormattedCreatedAt() {
+        return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
+    
     /**
      * Formata data de atualização para exibição
      * Formato: "dd/MM/yyyy HH:mm"
@@ -302,4 +303,78 @@ public class Task {
         return updatedAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
     
+    /**
+     * Formata data de conclusão para exibição
+     * Formato: "dd/MM/yyyy HH:mm"
+     * 
+     * @return data formatada ou "Não concluída"
+     */
+    public String getFormattedCompletedAt() {
+        if (completedAt == null) {
+            return "Não concluída";
+        }
+        return completedAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
+    
+    // === MÉTODOS OBJECT (equals, hashCode, toString) ===
+    
+    /**
+     * Compara duas tarefas
+     * Duas tarefas são iguais se têm o mesmo ID
+     * 
+     * @param o objeto a comparar
+     * @return true se for a mesma tarefa (mesmo ID)
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(id, task.id);
+    }
+    
+    /**
+     * Gera hash code baseado no ID
+     * Garante que tarefas iguais tenham mesmo hash
+     * 
+     * @return hash code
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+    
+    /**
+     * Representação textual da tarefa
+     * Útil para debug e logs
+     * 
+     * @return string representando a tarefa
+     */
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", status=" + status +
+                ", createdAt=" + getFormattedCreatedAt() +
+                '}';
+    }
+    
+    /**
+     * Representação detalhada da tarefa
+     * Inclui todos os campos
+     * 
+     * @return string completa da tarefa
+     */
+    public String toDetailedString() {
+        return "Task{\n" +
+                "  id='" + id + "'\n" +
+                "  title='" + title + "'\n" +
+                "  description='" + description + "'\n" +
+                "  status=" + status.getFormatted() + "\n" +
+                "  createdAt=" + getFormattedCreatedAt() + "\n" +
+                "  updatedAt=" + getFormattedUpdatedAt() + "\n" +
+                "  completedAt=" + getFormattedCompletedAt() + "\n" +
+                '}';
+    }
 }
