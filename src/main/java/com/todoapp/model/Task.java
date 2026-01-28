@@ -76,7 +76,7 @@ public class Task {
         this.id = UUID.randomUUID().toString();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.status = TaskStatus.PENDING;
+        this.status = TaskStatus.PENDENTE;
         this.title = "";
         this.description = "";
         this.completedAt = null;
@@ -102,16 +102,17 @@ public class Task {
      * @param updatedAt data de atualização
      * @param completedAt data de conclusão
      */
-    public Task((String id, String title, String description,
+    public Task(String id, String title, String description,
                 TaskStatus status, LocalDateTime createdAt, 
-                LocalDateTime updatedAt, LocalDateTime completedAt)){
+                LocalDateTime updatedAt, LocalDateTime completedAt){
         this.id = id != null ? id : UUID.randomUUID().toString();
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
         this.completedAt = completedAt; 
-        this.status = status != null ? status : TaskStatus.PENDING;
+        this.status = status != null ? status : TaskStatus.PENDENTE;
         this.createdAt = createdAt != null ? createdAt : LocalDateTime.now();
         this.updatedAt = updatedAt != null ? updatedAt : LocalDateTime.now();
+
 
     }
 
@@ -178,11 +179,11 @@ public class Task {
             throw new IllegalArgumentException("status não pode ser nulo.");
         }
         // Se o status for mudado para completado, atualiza completedAt e registra o momento
-        if (status == TaskStatus.COMPLETED && this.status != TaskStatus.COMPLETED){
+        if (status == TaskStatus.CONCLUIDA && this.status != TaskStatus.CONCLUIDA){
             this.completedAt = LocalDateTime.now();
         } 
         // Se estiver mudando de COMPLETED para outro status, zera completedAt
-        if (this.status != TaskStatus.COMPLETED && status != TaskStatus.COMPLETED){
+        if (this.status != TaskStatus.CONCLUIDA && status != TaskStatus.CONCLUIDA){
             this.completedAt = null;
         }
         this.status = status;
