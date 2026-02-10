@@ -68,7 +68,8 @@ public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>,
             String dateTimeString = json.getAsString();
             return LocalDateTime.parse(dateTimeString, FORMATTER);
         } catch (Exception e) {
-            throw new JsonParseException("Erro ao parsear LocalDateTime: " + json.getAsString(), e);
+            throw new JsonParseException("Erro ao parsear Data: " + json.getAsString(), e);
         }
     }
+
 }
