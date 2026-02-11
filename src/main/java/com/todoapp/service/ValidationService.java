@@ -76,7 +76,7 @@ public class ValidationService {
      * - Deve ter pelo menos 3 caracteres (após trim)
      * - Não pode exceder 100 caracteres
      * 
-     * @param title título a validar
+     * @param title  título a validar
      * @param result objeto para acumular erros
      */
     private void ValidateTitle(String title, ValidationResult result) {
@@ -87,10 +87,173 @@ public class ValidationService {
         String trimmedTitle = title.trim();
 
         // Verifica comprimento mínimo
-        if (trimmedTitle.length() < MIN_TITLE_LENGTH){
-            result.addError(String.format("O título deve possuir pelo menos %d caracteres (atual: %d) ", 
-            MIN_TITLE_LENGTH,
-        trimmedTitle.length()
-    ));
-}
+        if (trimmedTitle.length() < MIN_TITLE_LENGTH) {
+            result.addError(String.format("O título deve possuir pelo menos %d caracteres (atual: %d) ",
+                    MIN_TITLE_LENGTH,
+                    trimmedTitle.length()));
+        }
+        // Verifica comprimento máximo
+        if (trimmedTitle.length() > MAX_TITLE_LENGTH) {
+            result.addError(String.format("O título deve possuir no máximo %d caracteres (atual: %d) ",
+                    MAX_TITLE_LENGTH,
+                    trimmedTitle.length()));
+        }
+    }
+
+    /**
+     * Valida a descrição da tarefa
+     * 
+     * Regras:
+     * - Pode ser null ou vazia (é opcional)
+     * - Se fornecida, não pode exceder 500 caracteres
+     * 
+     * @param description descrição a validar
+     * @param result      objeto para acumular erros
+     */
+    private void ValidateDescription(String description, ValidationResult result) {
+        if (description == null || description.trim().isBlank()) {
+            return;
+        }
+        String trimmedDescription = description.trim();
+        // Verifica comprimento máximo
+        if (trimmedDescription.length() > MAX_DESCRIPTION_LENGTH) {
+            result.addError(String.format("A descrição deve possuir no máximo %d caracteres (atual: %d) ",
+                    MAX_DESCRIPTION_LENGTH,
+                    trimmedDescription.length()));
+        }
+    }
+    // === VALIDAÇÕES UTILITÁRIAS ===
+
+    /**
+     * Verifica se um título é válido (validação rápida)
+     * 
+     * @param title título a verificar
+     * @return true se válido, false caso contrário
+     */
+
+    public boolean isTitleValid(String title) {
+        if (title == null || title.trim().isBlank()) {
+            return false;
+        }
+        String trimmedTitle = title.trim();
+        return trimmedTitle.length() >= MIN_TITLE_LENGTH && trimmedTitle.length() <= MAX_TITLE_LENGTH;
+    }
+
+    /**
+     * Verifica se uma descrição é válida (validação rápida)
+     * 
+     * @param description descrição a verificar
+     * @return true se válida (pode ser null/vazia)
+     */
+    public boolean isDescriptionValid(String description) {
+        if (description == null || description.trim().isBlank()) {
+            return true;
+        }
+        return description.trim().length() <= MAX_DESCRIPTION_LENGTH;
+    }
+    // === GETTERS DE CONSTANTES (para UI) ===
+
+    /**
+     * Retorna comprimento mínimo permitido para título
+     * Útil para exibir na UI (ex: "Mínimo 3 caracteres")
+     */
+    public int getMinTitleLength() {
+        return MIN_TITLE_LENGTH;
+    }
+
+    /**
+     * Retorna comprimento máximo permitido para título
+     * Útil para exibir na UI e limitar TextField
+     */
+    public int getMaxTitleLength() {
+        return MAX_TITLE_LENGTH;
+    }
+
+    /**
+     * Retorna comprimento máximo permitido para descrição
+     * Útil para exibir na UI e limitar TextArea
+     */
+    public int getDescriptionMaxLength() {
+        return MAX_DESCRIPTION_LENGTH;
+    }
+    // === CLASSE INTERNA: RESULTADO DE VALIDAÇÃO ===
+
+    /**
+     * Representa o resultado de uma validação
+     * Armazena múltiplos erros e fornece métodos para verificação
+     */
+
+    public static class ValidationResult {
+        private final List<String> errors = new ArrayList<>();
+
+        /**
+         * Adiciona um erro à lista de erros
+         * 
+         * @param error mensagem de erro a ser adicionada
+         * @return void
+         *         Exemplo de uso:
+         *         ValidationResult result = new ValidationResult();
+         */
+        public void addError(String error) {
+            errors.add(error);
+        }
+
+        // Verifica se a validação passou (sem erros)
+        public boolean isValid() {
+            return errors.isEmpty();
+        }
+
+        // Verifica se validação falhou (tem erros)
+        public boolean hasErrors() {
+            return !errors.isEmpty();
+        }
+
+        // Retorna lista de erros
+        public List<String> getErrors() {
+            return new ArrayList<>(errors);
+        }
+
+        /**
+         * Retorna mensagem única com todos os erros
+         * Útil para exibir em diálogos
+         */
+        public String getErrorMessage() {
+            if (errors.isEmpty()) {
+                return "Nenhum erro de validação.";
+            }
+            // Múltiplos erros - formata lista
+            StringBuilder sb = new StringBuilder("Erros de validação:\n");
+            for (int i = 0; i < errors.size(); i++) {
+                sb.append(String.format("%d. %s\n", i + 1, errors.get(i)));
+            }
+            return sb.toString();
+        }
+
+        // Retorna quantidade de erros
+        public int getErrorCount() {
+            return errors.size();
+        }
+
+        @Override
+        public String toString() {
+            return isValid()
+                    ? "ValidationResult{valid}"
+                    : "ValidationResult{errors=" + errors + "}";
+        }
+    }
+    // === EXCEÇÃO CUSTOMIZADA ===
+
+    /**
+     * Exceção lançada quando validação falha
+     */
+    public static class ValidationException extends RuntimeException {
+
+        public ValidationException(String message) {
+            super(message);
+        }
+
+        public ValidationException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
 }
