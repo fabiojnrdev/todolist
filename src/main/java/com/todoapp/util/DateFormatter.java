@@ -1,4 +1,4 @@
-package main.java.com.todoapp.util;
+package com.todoapp.util;
 
 public class DateFormatter {
     

@@ -1,4 +1,4 @@
-package main.java.com.todoapp.service;
+package com.todoapp.service;
 
 import com.todoapp.model.Task;
 
@@ -31,7 +31,7 @@ public class ValidationService {
      * tamanho da descrição: 500
      */
 
-    public ValidationResult validade(main.java.com.todoapp.model.Task task) {
+    public ValidationResult validade(Task task) {
         // === VALIDAÇÃO PRINCIPAL ===
 
         /**
@@ -53,14 +53,7 @@ public class ValidationService {
         return result;
     }
 
-    /**
-     * Valida uma tarefa e lança exceção se inválida
-     * Útil para fluxos que precisam de fail-fast
-     * 
-     * @param task tarefa a validar
-     * @throws ValidationException se validação falhar
-     */
-    public void validateOrThrow(Task task) {
+    public void validateAndThrow(Task task) {
         ValidationResult result = validade(task);
         if (!result.isValid()) {
             throw new ValidationException(result.getErrorMessage());

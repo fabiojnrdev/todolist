@@ -1,5 +1,5 @@
 
-package main.java.com.todoapp.repository;
+package com.todoapp.repository;
 
 import com.todoapp.model.Task;
 import com.todoapp.model.TaskStatus;

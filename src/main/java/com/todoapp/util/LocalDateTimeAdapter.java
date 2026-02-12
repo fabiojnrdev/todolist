@@ -1,7 +1,7 @@
-package main.java.com.todoapp.util;
-package main.java.com.todoapp.repository;
+package com.todoapp.util;
 
 import com.google.gson.*;
+import com.google.gson.JsonDeserializationContext;
 
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;

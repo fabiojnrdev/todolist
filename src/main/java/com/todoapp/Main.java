@@ -1,4 +1,4 @@
-package main.java.com.todoapp;
+package com.todoapp;
 
 public class Main {
     

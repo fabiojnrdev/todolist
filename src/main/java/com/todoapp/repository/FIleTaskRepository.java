@@ -1,4 +1,4 @@
-package main.java.com.todoapp.repository;
+package com.todoapp.repository;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,7 +52,7 @@ public class FileTaskRepository implements ITaskRepository {
     // Dependências
     private final Gson gson;
     private final File file;
-    private final ReadWriteLock Lock;
+    private final ReadWriteLock lock;
 
     // Construtor
     public FileTaskRepository() {
@@ -62,31 +62,23 @@ public class FileTaskRepository implements ITaskRepository {
     public FileTaskRepository(String filePATH) {
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(LocalDateTime.class, new com.todoapp.util.LocalDateTimeAdapter())
                 .create();
         this.file = new File(FILE_PATH);
-        this.Lock = new ReentrantReadWriteLock();
-        ensureFileExists();
-
+        this.lock = new ReentrantReadWriteLock();
         initializeFile();
     }
 
-    // Inicialização
-
+    // === INICIALIZAÇÃO ===
     /**
-     * Cria um arquivo e diretório vazios se não existirem.
-     * Inicializa com array vazio.
+     * Cria arquivo e diretórios se não existirem
      */
-
     private void initializeFile() {
         try {
-            // Cria diretório se necessário
             File dir = file.getParentFile();
             if (dir != null && !dir.exists()) {
                 dir.mkdirs();
             }
-
-            // Cria arquivo com array vazio se não existir
             if (!file.exists()) {
                 file.createNewFile();
                 writeToFile(new ArrayList<>());
@@ -96,7 +88,7 @@ public class FileTaskRepository implements ITaskRepository {
         }
     }
 
-    // Operações básicas (CRUD)
+    // === OPERAÇÕES BÁSICAS (CRUD) ===
     @Override
     public Task save(Task task) {
         if (task == null) {
@@ -117,22 +109,21 @@ public class FileTaskRepository implements ITaskRepository {
     }
 
     @Override
-    public Task update(Task task){
-        if (task == null){
+    public Task update(Task task) {
+        if (task == null) {
             throw new IllegalArgumentException("Task não pode ser nula");
         }
         lock.writeLock().lock();
-        try{
-            List<task> tasks = readFromFile();
-
+        try {
+            List<Task> tasks = readFromFile();
             int index = -1;
-            for (int i = 0; i < tasks.size(); i++){
-                if (tasks.get(i).getId().equals(task.getId())){
+            for (int i = 0; i < tasks.size(); i++) {
+                if (tasks.get(i).getId().equals(task.getId())) {
                     index = i;
                     break;
                 }
             }
-            if (index == -1){
+            if (index == -1) {
                 throw new RepositoryException("Task não encontrada: " + task.getId());
             }
             tasks.set(index, task);
@@ -141,9 +132,10 @@ public class FileTaskRepository implements ITaskRepository {
         } finally {
             lock.writeLock().unlock();
         }
+    }
 
     @Override
-    public boolean deleteById(String id) {
+    public boolean delete(String id) {
         if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("ID não pode ser nulo ou vazio");
         }
@@ -165,17 +157,12 @@ public class FileTaskRepository implements ITaskRepository {
         if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("ID não pode ser nulo ou vazio");
         }
-        lock.writeLock().lock();
+        lock.readLock().lock();
         try {
             List<Task> tasks = readFromFile();
-            boolean removed = tasks.removeIf(t -> t.getId().equals(id));
-            if (removed) {
-                writeToFile(tasks);
-            }
-            return removed;
+            return tasks.stream().filter(t -> t.getId().equals(id)).findFirst();
         } finally {
-            lock.writeLock().unlock();
-
+            lock.readLock().unlock();
         }
     }
 
@@ -183,19 +170,19 @@ public class FileTaskRepository implements ITaskRepository {
     public List<Task> findAll() {
         lock.readLock().lock();
         try {
-            return new ArrayList<>(readFromFile()); // retorna cópia
+            return new ArrayList<>(readFromFile());
         } finally {
             lock.readLock().unlock();
         }
     }
-    // operações de busca (queries) 
+
     @Override
-    public List<Task> findByStatus(TaskStatus status){
-        if (status == null){
+    public List<Task> findByStatus(TaskStatus status) {
+        if (status == null) {
             throw new IllegalArgumentException("Status não pode ser nulo");
         }
         lock.readLock().lock();
-        try{
+        try {
             List<Task> tasks = readFromFile();
             return tasks.stream()
                     .filter(t -> t.getStatus() == status)
@@ -204,100 +191,109 @@ public class FileTaskRepository implements ITaskRepository {
             lock.readLock().unlock();
         }
     }
+
     @Override
-    public List<Task> findByTitleContaining(String keyword){
-        if (keyword == null || keyword.isBlank()){
+    public List<Task> findByTitleContaining(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
             throw new IllegalArgumentException("Keyword não pode ser nula ou vazia");
         }
         lock.readLock().lock();
-        try{
-            List<main.java.com.todoapp.model.Task> tasks = readFromFile();
-            String lowerKeyword = keyword.toLowerCase();
-
-            return tasks.stream()
-            .filter(t -> t.getTitle().toLowerCase().contains(lowerKeyword))
-            .collect(Collectors.toList());
-        } finally{
-            lock.readLock().unlock();
-        }
-    }
-    // operações de utilidade
-    @Override
-    public long count(){
-        lock.readLock().lock();
-        try{
+        try {
             List<Task> tasks = readFromFile();
-            return tasks.size();
+            String lowerKeyword = keyword.toLowerCase();
+            return tasks.stream()
+                    .filter(t -> t.getTitle().toLowerCase().contains(lowerKeyword))
+                    .collect(Collectors.toList());
         } finally {
             lock.readLock().unlock();
         }
     }
+
     @Override
-    public void  deleteAll(){
+    public long count() {
+        lock.readLock().lock();
+        try {
+            return readFromFile().size();
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("ID não pode ser nulo ou vazio");
+        }
+        return findById(id).isPresent();
+    }
+
+    @Override
+    public void deleteAll() {
         lock.writeLock().lock();
-        try{
+        try {
             writeToFile(new ArrayList<>());
         } finally {
             lock.writeLock().unlock();
         }
     }
-      // === MÉTODOS PRIVADOS (I/O) ===
-    
+
+    // === MÉTODOS PRIVADOS (I/O) ===
     /**
      * Lê tarefas do arquivo JSON
-     * Se arquivo estiver vazio ou corrompido, retorna lista vazia
-     * 
-     * @return lista de tarefas
-     * @throws RepositoryException se erro de leitura
      */
     private List<Task> readFromFile() {
-        try (FileReader reader = new FileReader(file)){
-            // Define tipo para deserialização: List<Task>
-            Type taskListType = new TypeToken<ArrayList<Task>>(){}.getType();
+        try (FileReader reader = new FileReader(file)) {
+            Type taskListType = new TypeToken<ArrayList<Task>>() {
+            }.getType();
             List<Task> tasks = gson.fromJson(reader, taskListType);
-            // Se arquivo vazio ou null, retorna lista vazia
             return tasks != null ? tasks : new ArrayList<>();
-        } catch (IOException e){
-            throw new RepositoryException("Erro ao ler arquivo: " + file.getAbsolutePath(), e);
-        } catch (Exception e){
-           // JSON corrompido - retorna lista vazia e loga
+        } catch (IOException e) {
+            System.err.println("AVISO: Erro ao ler arquivo. Iniciando com lista vazia.");
+            return new ArrayList<>();
+        } catch (Exception e) {
             System.err.println("AVISO: Arquivo JSON corrompido. Iniciando com lista vazia.");
             return new ArrayList<>();
         }
-         /**
+    }
+
+    /**
      * Escreve tarefas no arquivo JSON
-     * Sobrescreve conteúdo anterior
-     * 
-     * @param tasks lista de tarefas a salvar
-     * @throws RepositoryException se erro de escrita
      */
-    private void writeToFile(List<Task> tasks){
-        try (FileWriter writer = new FileWriter(file, false)){
+    private void writeToFile(List<Task> tasks) {
+        try (FileWriter writer = new FileWriter(file, false)) {
             gson.toJson(tasks, writer);
             writer.flush();
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new RepositoryException("Erro ao escrever arquivo: " + file.getAbsolutePath(), e);
-        }            
+        }
     }
-     // === MÉTODOS UTILITÁRIOS ===
-    
+
+    // === MÉTODOS UTILITÁRIOS ===
     /**
      * Retorna caminho absoluto do arquivo
-     * Útil para debug
-     * 
-     * @return path do arquivo
      */
-     public String getFilePath() {
+    public String getFilePath() {
         return file.getAbsolutePath();
     }
-    
+
     /**
      * Verifica se arquivo existe
-     * 
-     * @return true se existe
      */
     public boolean fileExists() {
         return file.exists();
     }
-}
+
+    // === EXCEÇÃO CUSTOMIZADA ===
+    /**
+     * Exceção lançada em erros de repositório
+     */
+    public static class RepositoryException extends RuntimeException {
+        public RepositoryException(String message) {
+            super(message);
+        }
+
+        public RepositoryException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package main.java.com.todoapp.view;
+package com.todoapp.view;
 
 public class MainWIndow {
     
