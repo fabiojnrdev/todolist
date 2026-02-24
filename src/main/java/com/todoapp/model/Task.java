@@ -88,8 +88,12 @@ public class Task {
      * @throws IllegalArgumentException se título for null ou vazio
      */
     public Task(String title) {
-        this();  
-        setTitle(title);
+        this();
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Título não pode ser nulo ou vazio.");
+        }
+        this.title = title.trim();
+        updateTimestamp();
     }
     
     /**

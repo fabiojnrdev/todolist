@@ -138,7 +138,7 @@ public class TaskController {
      */
     public void createTask(String title, String description, TaskStatus status) {
         try {
-            Task task = taskService.createTask(title, description, status);
+            taskService.createTask(title, description, status);
             notifySuccess("Tarefa criada com status " + status.getDisplayName());
             refreshTaskList();
 
@@ -156,7 +156,7 @@ public class TaskController {
     public void loadAllTasks() {
         try {
             List<Task> tasks = taskService.getAllTasks();
-            refreshTaskList();
+            notifyTasksChanged(tasks);
 
         } catch (Exception e) {
             notifyError("Erro ao carregar tarefas: " + e.getMessage());
@@ -171,7 +171,7 @@ public class TaskController {
     public void loadTasksByStatus(TaskStatus status) {
         try {
             List<Task> tasks = taskService.getTasksByStatus(status);
-            refreshTaskList();
+            notifyTasksChanged(tasks);
 
         } catch (Exception e) {
             notifyError("Erro ao carregar tarefas: " + e.getMessage());
@@ -191,7 +191,7 @@ public class TaskController {
             }
 
             List<Task> tasks = taskService.searchTasksByTitle(keyword);
-            refreshTaskList();
+            notifyTasksChanged(tasks);
 
         } catch (Exception e) {
             notifyError("Erro ao buscar tarefas: " + e.getMessage());
@@ -446,7 +446,7 @@ public class TaskController {
      */
     public long getTotalTaskCount() {
         try {
-            return taskService.getTotalTaskCount();
+            return taskService.getTaskCount();
         } catch (Exception e) {
             notifyError("Erro ao contar tarefas: " + e.getMessage());
             return 0;
@@ -480,42 +480,25 @@ public class TaskController {
             notifyError("Erro ao verificar tarefas pendentes: " + e.getMessage());
             return false;
         }
-        // Metódos auxiliares privados
-private void refreshTaskList() {
-        loadAllTasks();
     }
 
+    // Métodos auxiliares privados
+    /**
+     * Notifica sobre mudança na lista de tarefas
+     *
+     * @param tasks lista de tarefas atualizada
+     */
     private void notifyTasksChanged(List<Task> tasks) {
         if (onTasksUpdated != null) {
             onTasksUpdated.accept(tasks);
         }
     }
-    /**
-     * Notifica View sobre sucesso na operação
-     * 
-     * @param message mensagem de sucesso
-     */
-    private void notifySuccess(String message) {
-        if (onSuccess != null) {
-            onSuccess.accept(message);
-        }
-    }
-    /**
-     * Notifica View sobre erro na operação
-     * 
-     * @param message mensagem de erro
-     */
-    private void notifyError(String message) {
-        if (onError != null) {
-            onError.accept(message);
-        }
-    }
+
     // Acesso ao service
-    
     /**
      * Retorna referência ao TaskService
      * Use com cuidado - prefira usar métodos do controller
-     * 
+     *
      * @return serviço de tarefas
      */
     public TaskService getTaskService() {
