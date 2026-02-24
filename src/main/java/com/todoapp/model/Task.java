@@ -372,14 +372,18 @@ public class Task {
      * @return string completa da tarefa
      */
     public String toDetailedString() {
-        return "Task{\n" +
-                "  id='" + id + "'\n" +
-                "  title='" + title + "'\n" +
-                "  description='" + description + "'\n" +
-                "  status=" + status.getFormatted() + "\n" +
-                "  createdAt=" + getFormattedCreatedAt() + "\n" +
-                "  updatedAt=" + getFormattedUpdatedAt() + "\n" +
-                "  completedAt=" + getFormattedCompletedAt() + "\n" +
-                '}';
+        return (
+            """
+            Task{
+              id='%s'
+              title='%s'
+              description='%s'
+              status=%s
+              createdAt=%s
+              updatedAt=%s
+              completedAt=%s
+            }
+            """
+        ).formatted(id, title, description, status.getFormatted(), getFormattedCreatedAt(), getFormattedUpdatedAt(), getFormattedCompletedAt());
     }
 }
