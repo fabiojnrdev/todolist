@@ -1,0 +1,13 @@
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\controller\TaskController.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\Main.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\model\Task.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\model\TaskStatus.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\repository\FileTaskRepository.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\repository\ITaskRepository.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\service\TaskService.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\service\ValidationService.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\util\DateFormatter.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\util\FileHandler.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\util\LocalDateTimeAdapter.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\view\MainWindow.java
+C:\Users\fabio\OneDrive\Documentos\ToDoList - Java\src\main\java\com\todoapp\view\TaskDialog.java

@@ -3,7 +3,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Identificação do projeto -->
     <groupId>com.todoapp</groupId>
     <artifactId>todo-manager</artifactId>
     <version>1.0.0</version>
@@ -12,21 +11,15 @@
     <name>Todo Manager</name>
     <description>Sistema de Gerenciamento de Tarefas</description>
 
-    <!-- Propriedades -->
     <properties>
-        <!-- Versão do Java -->
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- Versões das Dependências -->
         <gson.version>2.10.1</gson.version>
         <junit.version>5.10.1</junit.version>
         <javafx.version>21.0.1</javafx.version>
     </properties>
-    <!-- Dependências -->
+
     <dependencies>
-        <!-- JavaFX (Interface Gráfica) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -37,53 +30,45 @@
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-        <!--Gson -(Manipulação JSON)-->
-            <dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
-               <artifactId>gson</artifactId>
-               <version>2.10.1</version>
-               </dependency>
-            <!-- JUnit 5 (Testes Unitários) -->
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>5.10.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.10.1</version>
-                <scope>test</scope>
-            </dependency>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.14</version>
+        </dependency>
+    </dependencies>
 
-            <!--Logging-->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>2.0.9</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.4.14</version>
-            </dependency>
-        </dependencies>
-
-        <!--Build-->
-        <build>
+    <build>
         <plugins>
-        <!--Compiler Plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-continuum-plugin</artifactId>
-                <version>3.11.0</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <release>25</release>
                 </configuration>
             </plugin>
-             <!-- JavaFX Plugin -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -92,15 +77,11 @@
                     <mainClass>com.todoapp.Main</mainClass>
                 </configuration>
             </plugin>
-
-            <!-- Surefire Plugin (Testes) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0</version>
             </plugin>
-
-            <!-- JAR executável -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -114,5 +95,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        </build>
+    </build>
+
 </project>
