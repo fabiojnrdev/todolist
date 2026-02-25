@@ -25,7 +25,7 @@ import com.google.gson.JsonSerializer;
  * 
  * @author Fábio Júnior
  * @version 1.0.0
- */
+*/
 public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, 
                                              JsonDeserializer<LocalDateTime> {
     
@@ -52,6 +52,7 @@ public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>,
         }
         return new JsonPrimitive(src.format(FORMATTER));
     }
+    
     /**
      * Converte JSON (String) para LocalDateTime
      * 
@@ -65,18 +66,20 @@ public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>,
      * @return LocalDateTime parseado
      * @throws JsonParseException se string inválida
      */
-        @Override
-        public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException{
-        if (json == null || json.isJsonNull()){
-            return null; 
+    @Override
+    public LocalDateTime deserialize(JsonElement json, Type typeOfT, 
+                                     JsonDeserializationContext context) 
+                                     throws JsonParseException {
+        if (json.isJsonNull()) {
+            return null;
         }
+        
         try {
-            String dateTimeString = json.getAsString();
-            return LocalDateTime.parse(dateTimeString, FORMATTER);
+            String dateStr = json.getAsString();
+            return LocalDateTime.parse(dateStr, FORMATTER);
+            
         } catch (Exception e) {
-            throw new JsonParseException("Erro ao parsear Data: " + json.getAsString(), e);
+            throw new JsonParseException("Erro ao parsear data: " + json.getAsString(), e);
         }
     }
-
 }
