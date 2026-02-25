@@ -585,7 +585,7 @@ public class MainWindow {
             Versão: 1.0.0
             Desenvolvido em Java 21 + JavaFX
             
-            © 2026 Todo App Team
+            © 2026 Fábio Júnior
             """);
         alert.showAndWait();
     }
